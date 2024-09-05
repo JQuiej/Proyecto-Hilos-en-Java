@@ -1,40 +1,41 @@
 
-package com.umg.productorconsumidor.vista;
+package com.umg.semaforo.vista;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Random;
 
 
 
 public class vista extends javax.swing.JFrame {
 
 private final Queue<JLabel> clientes = new LinkedList<>();
-    private static final int capacidad = 3;
-    private JLabel sillaBar = new JLabel();
-    private JLabel[] sillas = new JLabel[3];
-    private JLabel[] clientesLabels = new JLabel[3];
+    private static final int capacidad = 5;
+    private JLabel Puerta = new JLabel();
+    private JLabel In = new JLabel();
+    private JLabel[] clientesLabels = new JLabel[5];
     private Timer timer;
     private int clientesEnFila = 0;
     private volatile boolean running = true;
 
     public vista() {
         initComponents();
-        this.setTitle("BARBERIA UMG");
+        this.setTitle("SEMAFORO UMG");
         this.setLocationRelativeTo(null);
         INICIAR.addActionListener(e -> iniciarAnimacion());
         PARAR.addActionListener(e -> detenerAnimacion() );
-        sillas[0] = s3;
-        sillas[1] = s4;
-        sillas[2] = s5;
 
-        sillaBar = sb;
-        
-        clientesLabels[0] = client4;
-        clientesLabels[1] = client3;
-        clientesLabels[2] = client5;
+
+        Puerta = puer;
+        In = IN;
+        clientesLabels[0] = client1;
+        clientesLabels[1] = client2;
+        clientesLabels[2] = client3;
+        clientesLabels[3] = client4;
+        clientesLabels[4] = client5;
     }
 
     private void iniciarAnimacion() {
@@ -58,6 +59,19 @@ private final Queue<JLabel> clientes = new LinkedList<>();
     private void detenerAnimacion() {
     running = false; 
     }
+        
+    public static int RandomNumber(int minRange1, int maxRange1, int minRange2, int maxRange2) {
+        Random random = new Random();
+        
+        // Decidir aleatoriamente si usar el primer rango o el segundo rango
+        if (random.nextBoolean()) {
+            // Generar número aleatorio en el primer rango
+            return random.nextInt((maxRange1 - minRange1) + 1) + minRange1;
+        } else {
+            // Generar número aleatorio en el segundo rango
+            return random.nextInt((maxRange2 - minRange2) + 1) + minRange2;
+        }
+    }
 
     public synchronized void producir() throws InterruptedException {
         while (running) {
@@ -70,10 +84,10 @@ private final Queue<JLabel> clientes = new LinkedList<>();
             clientes.add(clienteLabel);
             clientesEnFila++;
             System.out.println("movemos a cola "  );
-            moverCliente(clienteLabel, sillas[index]);
+            moverCliente(clienteLabel, Puerta);
 
             notify();  // Notifica al consumidor que hay un cliente disponible
-            Thread.sleep(3000);
+            Thread.sleep(RandomNumber(2000,3000,2250,2750));
         }
     }
 
@@ -86,15 +100,13 @@ private final Queue<JLabel> clientes = new LinkedList<>();
             JLabel atendido = clientes.poll();
             clientesEnFila--;
 
-            moverCliente(atendido, sillaBar); // Mueve el cliente a la silla del barbero
-
             // Espera un tiempo mientras el cliente es atendido
-            Thread.sleep(3000);
+            Thread.sleep(RandomNumber(1000,2000,1225,1750));
 
             // Después de ser atendido, regresa el cliente a su posición inicial
             resetCliente(atendido);
             notify();  // Notifica al productor que hay espacio disponible en la fila
-            Thread.sleep(3000);
+            Thread.sleep(RandomNumber(250,1000,500,750));
         }
     }
 
@@ -104,8 +116,8 @@ private final Queue<JLabel> clientes = new LinkedList<>();
         
         System.out.println("x " +startX +" y " + startY );
 
-        int endX = destino.getX();
-        int endY = destino.getY()-50;
+        int endX = destino.getX()+50;
+        int endY = destino.getY()+350;
 
         int delay = 10;
         int step = 5;
@@ -113,7 +125,7 @@ private final Queue<JLabel> clientes = new LinkedList<>();
     timer = new Timer(delay, new ActionListener() {
         int x = startX;
         int y = startY;
-        int tolerance = 1;  // Reduce la tolerancia para detener el movimiento más cerca del destino
+        int tolerance = 1; 
 
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -137,8 +149,8 @@ private final Queue<JLabel> clientes = new LinkedList<>();
 }
 
     private void resetCliente(JLabel cliente) {
-        int originalX = 280; // Posición X original (puedes ajustar según tu diseño)
-        int originalY = 360; // Posición Y original (puedes ajustar según tu diseño)
+        int originalX = 960; // Posición X original (puedes ajustar según tu diseño)
+        int originalY = 530; // Posición Y original (puedes ajustar según tu diseño)
 
         cliente.setLocation(originalX, originalY);
     }
@@ -153,18 +165,15 @@ private final Queue<JLabel> clientes = new LinkedList<>();
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        client4 = new javax.swing.JLabel();
-        ador = new javax.swing.JLabel();
         PARAR = new javax.swing.JButton();
         INICIAR = new javax.swing.JButton();
+        client1 = new javax.swing.JLabel();
+        client2 = new javax.swing.JLabel();
         client3 = new javax.swing.JLabel();
+        client4 = new javax.swing.JLabel();
         client5 = new javax.swing.JLabel();
-        s3 = new javax.swing.JLabel();
-        s5 = new javax.swing.JLabel();
-        s4 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        sb = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
+        puer = new javax.swing.JLabel();
+        IN = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(245, 245, 220));
@@ -173,61 +182,48 @@ private final Queue<JLabel> clientes = new LinkedList<>();
         setResizable(false);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        client4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/hombre.png"))); // NOI18N
-        getContentPane().add(client4, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 360, -1, -1));
-
-        ador.setIcon(new javax.swing.ImageIcon(getClass().getResource("/barbero (1).png"))); // NOI18N
-        getContentPane().add(ador, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 110, -1, -1));
-
         PARAR.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         PARAR.setText("PARAR");
-        getContentPane().add(PARAR, new org.netbeans.lib.awtextra.AbsoluteConstraints(940, 190, 150, 60));
+        getContentPane().add(PARAR, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 620, 150, 60));
 
         INICIAR.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         INICIAR.setText("INICIAR");
-        getContentPane().add(INICIAR, new org.netbeans.lib.awtextra.AbsoluteConstraints(940, 115, 150, 60));
+        getContentPane().add(INICIAR, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 540, 150, 60));
+
+        client1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/hombre.png"))); // NOI18N
+        getContentPane().add(client1, new org.netbeans.lib.awtextra.AbsoluteConstraints(960, 530, -1, -1));
+
+        client2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/hombre.png"))); // NOI18N
+        getContentPane().add(client2, new org.netbeans.lib.awtextra.AbsoluteConstraints(960, 530, -1, -1));
 
         client3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/hombre.png"))); // NOI18N
-        getContentPane().add(client3, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 360, -1, -1));
+        getContentPane().add(client3, new org.netbeans.lib.awtextra.AbsoluteConstraints(960, 530, -1, -1));
+
+        client4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/hombre.png"))); // NOI18N
+        getContentPane().add(client4, new org.netbeans.lib.awtextra.AbsoluteConstraints(960, 530, -1, -1));
 
         client5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/hombre.png"))); // NOI18N
-        getContentPane().add(client5, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 360, -1, -1));
+        getContentPane().add(client5, new org.netbeans.lib.awtextra.AbsoluteConstraints(960, 530, -1, -1));
 
-        s3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/silla.png"))); // NOI18N
-        getContentPane().add(s3, new org.netbeans.lib.awtextra.AbsoluteConstraints(960, 510, -1, -1));
+        puer.setIcon(new javax.swing.ImageIcon(getClass().getResource("/puerta}.jpg"))); // NOI18N
+        getContentPane().add(puer, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 20, -1, -1));
 
-        s5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/silla.png"))); // NOI18N
-        getContentPane().add(s5, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 510, -1, -1));
-
-        s4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/silla.png"))); // NOI18N
-        getContentPane().add(s4, new org.netbeans.lib.awtextra.AbsoluteConstraints(810, 510, -1, -1));
-
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/barbero.png"))); // NOI18N
-        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 530, -1, -1));
-
-        sb.setIcon(new javax.swing.ImageIcon(getClass().getResource("/sillabar.png"))); // NOI18N
-        getContentPane().add(sb, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 560, -1, -1));
-
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/4453.jpg"))); // NOI18N
-        jLabel1.setText("jLabel1");
-        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
+        IN.setText("Inicio");
+        getContentPane().add(IN, new org.netbeans.lib.awtextra.AbsoluteConstraints(1010, 660, -1, -1));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel IN;
     private javax.swing.JButton INICIAR;
     private javax.swing.JButton PARAR;
-    private javax.swing.JLabel ador;
+    private javax.swing.JLabel client1;
+    private javax.swing.JLabel client2;
     private javax.swing.JLabel client3;
     private javax.swing.JLabel client4;
     private javax.swing.JLabel client5;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel s3;
-    private javax.swing.JLabel s4;
-    private javax.swing.JLabel s5;
-    private javax.swing.JLabel sb;
+    private javax.swing.JLabel puer;
     // End of variables declaration//GEN-END:variables
 }
